@@ -1,19 +1,16 @@
 "use client"
 
-import { useMemo, useState } from "react";
+import { useState, useCallback } from "react";
 import { IoCopyOutline } from "react-icons/io5";
+import { IoCheckmarkDone } from "react-icons/io5";
 
-import dynamic from "next/dynamic";
 import Image from "next/image";
 
 import { cn } from "@/lib/util";
 
 
 import { BackgroundGradientAnimation } from "./GradientBg";
-import animationData from "@/data/confetti.json";
 import MagicButton from "../MagicButton";
-
-const Lottie = dynamic(() => import("react-lottie"), { ssr: false });
 
 export const BentoGrid = ({
   className,
@@ -79,23 +76,12 @@ export const BentoGridItem = ({
 
   const [copied, setCopied] = useState(false);
 
-  const defaultOptions = useMemo(
-    () => ({
-      loop: copied,
-      autoplay: copied,
-      animationData: animationData,
-      rendererSettings: {
-        preserveAspectRatio: "xMidYMid slice",
-      },
-    }),
-    [copied]
-  );
-
-  const handleCopy = () => {
+  const handleCopy = useCallback(() => {
     const text = "alosmartorellbautista@gmail.com";
     navigator.clipboard.writeText(text);
     setCopied(true);
-  };
+    setTimeout(() => setCopied(false), 3000);
+  }, []);
 
   return (
     <div
@@ -197,15 +183,9 @@ export const BentoGridItem = ({
           )}
           {id === 6 && (
             <div className="mt-5 relative">
-              {copied && (
-                <div className="absolute -bottom-5 right-0">
-                  <Lottie options={defaultOptions} height={200} width={400} />
-                </div>
-              )}
-
               <MagicButton
                 title={copied ? "¡Email copiado!" : "Copiar mi email"}
-                icon={<IoCopyOutline />}
+                icon={copied ? <IoCheckmarkDone /> : <IoCopyOutline />}
                 position="left"
                 handleClick={handleCopy}
                 otherClasses="!bg-[#161A31]"
